@@ -1,0 +1,59 @@
+# -----------------------
+# Python cache and build
+# -----------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# -----------------------
+# Virtual environments
+# -----------------------
+venv/
+venvs/
+.env/
+.env*/
+.venv*/
+Scripts/
+bin/
+
+# -----------------------
+# Jupyter / IPython
+# -----------------------
+.ipynb_checkpoints/
+*.ipynb~ 
+
+# -----------------------
+# Logs and checkpoints
+# -----------------------
+*.log
+logs/
+checkpoints/
+*.pkl
+*.jsonl
+*.csv
+
+# -----------------------
+# Model files (Keras / TF)
+# -----------------------
+*.h5
+*.keras
+*.ckpt
+*.pb
+saved_model/
+tf_logs/
+
+# -----------------------
+# IDE / OS
+# -----------------------
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
