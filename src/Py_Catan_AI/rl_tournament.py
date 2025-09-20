@@ -1,6 +1,8 @@
 # py_catan_rl_tournament.py
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import tensorflow as tf
 from Py_Catan_AI.py_catan_tournament import Tournament
 from Py_Catan_AI.py_catan_game import PyCatanGame
 from Py_Catan_AI.game_log import victory_points_from_game_log, rounds_from_game_log
@@ -194,3 +196,59 @@ class RLTournament(Tournament):
         }
         return dataset
 
+
+def debug_dataset(dataset, name="dataset", model=None, max_points=5000):
+    """
+    Run sanity checks on the dataset before training PPO.
+    Optionally run a forward pass with the given model.
+    """
+    print(f"\n🔍 Debugging {name} ...")
+
+    # --- Advantage stats
+    adv = dataset["adv"]
+    print(" Advantage stats:")
+    print("   mean:", np.mean(adv), " std:", np.std(adv),
+          " min:", np.min(adv), " max:", np.max(adv))
+
+    # Plot advantage distribution
+    plt.hist(adv, bins=50, alpha=0.7, color="blue")
+    plt.title(f"Advantage distribution ({name})")
+    plt.xlabel("Advantage")
+    plt.ylabel("Count")
+    plt.show()
+
+    # --- Policy one-hot encoding check
+    y_policy = dataset["y_policy"]
+    row_sums = y_policy.sum(axis=1)
+    unique_sums = np.unique(row_sums)
+    print(" Policy targets:")
+    print("   shape:", y_policy.shape,
+          " unique row sums (should all be 1):", unique_sums[:10])
+
+    # --- Value targets
+    y_value = dataset["y_value"]
+    print(" Value targets:")
+    print("   mean:", np.mean(y_value), " std:", np.std(y_value),
+          " min:", np.min(y_value), " max:", np.max(y_value))
+
+    # Plot returns distribution
+    plt.hist(y_value, bins=50, alpha=0.7, color="green")
+    plt.title(f"Returns/Value targets distribution ({name})")
+    plt.xlabel("Return")
+    plt.ylabel("Count")
+    plt.show()
+
+    # --- Forward pass sanity check
+    if model is not None:
+        try:
+            logits, values = model.predict_logits_and_value(dataset["x_inputs"], verbose=0)
+            probs = tf.nn.softmax(logits).numpy()
+            print(" Policy probs:")
+            print("   shape:", probs.shape,
+                  " row sums (should be 1):", np.round(probs.sum(axis=1)[:10], 3))
+            print(" Value preds:")
+            print("   mean:", np.mean(values), " std:", np.std(values))
+        except Exception as e:
+            print("⚠️ Forward pass failed:", e)
+
+    print(f"✅ Finished debugging {name}\n")

@@ -143,9 +143,7 @@ class PyCatanGame(PyCatanGameEnv):
         # --- Check which players have created an RL log for reinforcement learning ---
         for p in players:
             if hasattr(p, "rl_log"):
-                print(f"Finalizing RL log for player {p.name}")
                 p.rl_log.finalize_rewards(gamma = 1)
-                # Export as DataFrame
                 df_rl = p.rl_log.to_dataframe()
         
         self.game_log = game_log

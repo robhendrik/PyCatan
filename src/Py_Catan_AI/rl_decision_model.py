@@ -116,7 +116,7 @@ class RLDecisionModel:
 
 
 
-    def init_from_existing(self, existing_model):
+    def init_from_existing(self, existing_model, verbose=False):
         """
         Initialize this model's weights from an existing Keras model
         (e.g., a previously trained DecisionModel or RLDecisionModel).
@@ -135,11 +135,12 @@ class RLDecisionModel:
             else:
                 skipped.append(layer.name)
 
-        # Print summary of transfer
-        for name in transferred:
-            print(f"✅ Transferred weights for layer {name}")
-        for name in skipped:
-            print(f"⚠️ Skipping layer {name} (no matching layer in source model)")
+        # Print summary of 
+        if verbose:
+            for name in transferred:
+                print(f"✅ Transferred weights for layer {name}")
+            for name in skipped:
+                print(f"⚠️ Skipping layer {name} (no matching layer in source model)")
 
         return self
     
