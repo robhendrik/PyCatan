@@ -7,6 +7,7 @@ from Py_Catan_AI.py_catan_tournament import Tournament
 from Py_Catan_AI.py_catan_game import PyCatanGame
 from Py_Catan_AI.game_log import victory_points_from_game_log, rounds_from_game_log
 from Py_Catan_AI.rl_game_log import RLReplayBuffer
+import multiprocessing as mp
 
 
 class RLTournament(Tournament):
@@ -92,6 +93,46 @@ class RLTournament(Tournament):
 
         return overall_tournament_points, overall_victory_points, overall_rounds, rl_training_log
     
+
+
+
+    def _run_single_game(self, players, gamma):
+        """Worker: run one game and return RL log."""
+        game = PyCatanGame(
+            max_rounds=self.max_rounds_per_game,
+            victory_points_to_win=self.victory_points_to_win,
+        )
+        game_log = game.play_catan_game(players=players)
+        rl_logs = []
+        for p in players:
+            if hasattr(p, "rl_log"):
+                p.rl_log.finalize_rewards(gamma=gamma)
+                rl_logs.append(p.rl_log.to_dataframe())
+        return game_log, rl_logs
+
+    def tournament_rl_training_data_generation_parallel(self, players, gamma=0.99, n_jobs=None):
+        """
+        Run tournament in parallel with multiple processes.
+        Returns merged RL logs.
+        """
+        if n_jobs is None:
+            n_jobs = mp.cpu_count()
+
+        # Prepare job args
+        jobs = [(players, gamma) for _ in range(self.no_games_in_tournament)]
+
+        with mp.Pool(processes=n_jobs) as pool:
+            results = pool.starmap(self._run_single_game, jobs)
+
+        # Collect logs
+        all_rl_logs = []
+        for _, rl_logs in results:
+            all_rl_logs.extend(rl_logs)
+
+        merged_rl_log = pd.concat(all_rl_logs, ignore_index=True)
+        return merged_rl_log
+
+    
     def tournament_with_logs(self, players, gamma=0.99):
         """
         Play full tournament, collect and return merged RL logs.
@@ -151,7 +192,7 @@ class RLTournament(Tournament):
               - y_value: return targets
               - adv: advantages (for custom policy loss)
         """
-        if rl_log_phase is None or rl_log_phase.empty:
+        if rl_log_phase is None:
             print("⚠️ Empty log, nothing to convert.")
             return None
 
