@@ -108,7 +108,8 @@ class RLTournament(Tournament):
             if hasattr(p, "rl_log"):
                 p.rl_log.finalize_rewards(gamma=gamma)
                 rl_logs.append(p.rl_log.to_dataframe())
-        return game_log, rl_logs
+        # return game_log, rl_logs
+        return None, rl_logs
 
     def tournament_rl_training_data_generation_parallel(self, players, gamma=0.99, n_jobs=None):
         """
@@ -130,7 +131,7 @@ class RLTournament(Tournament):
             all_rl_logs.extend(rl_logs)
 
         merged_rl_log = pd.concat(all_rl_logs, ignore_index=True)
-        return merged_rl_log
+        return None, None, None, merged_rl_log
 
     
     def tournament_with_logs(self, players, gamma=0.99):
@@ -200,7 +201,7 @@ class RLTournament(Tournament):
         states = np.stack(rl_log_phase["state"].values)
         masks = np.stack(rl_log_phase["mask"].values)
         actions = rl_log_phase["action"].values
-        returns = rl_log_phase["return"].values
+        returns = np.array([float(r) for r in rl_log_phase["return"].values], dtype=np.float32).reshape(-1, 1)
         advantages = rl_log_phase["advantage"].values
 
         returns = rl_log_phase["return"].values.astype(np.float32)

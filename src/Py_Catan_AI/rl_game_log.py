@@ -80,15 +80,13 @@ class RLReplayBuffer:
             returns[i] = G
             future_round = rounds[i]
 
-        # assign back
+        # assign back as plain floats
         for entry, d_r, ret in zip(self.entries, delta_rewards, returns):
-            entry["delta_reward"] = d_r
-            entry["return"] = ret
-            # advantage requires that state_value was logged at time of entry
-            if "state_value" in entry:
-                entry["advantage"] = ret - entry["state_value"]
-            else:
-                entry["advantage"] = ret  # fallback: if no baseline, advantage = return
+            entry["delta_reward"] = float(d_r)
+            entry["return"] = float(ret)
+            # advantage requires a baseline if available
+            sv = float(entry.get("state_value", 0.0))  # ensure scalar
+            entry["advantage"] = float(ret) - sv
 
 
 
