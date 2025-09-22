@@ -85,7 +85,7 @@ class PPOTrainer:
             batch_size=batch_size,
             epochs=epochs,
             shuffle=True,
-            verbose=1
+            verbose=0
         )
         return history
 

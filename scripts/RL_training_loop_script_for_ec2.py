@@ -2,6 +2,7 @@ import sys
 import os
 import argparse
 import numpy as np
+import pandas as pd
 sys.path.append("./src")
 
 from Py_Catan_AI.default_structure import default_players, default_structure
@@ -22,7 +23,7 @@ bucket_name = "pycatanbucket"
 
 def save_to_s3(local_path, bucket, s3_path):
     s3.upload_file(local_path, bucket, s3_path)
-    print(f"✅ Uploaded {local_path} to s3://{bucket}/{s3_path}")
+    # print(f"✅ Uploaded {local_path} to s3://{bucket}/{s3_path}")
 
 # python scripts/RL_training_loop_script_for_ec2.py --rounds 2 --train_games 1 --test_games 1  
 # python scripts/RL_training_loop_script_for_ec2.py --rounds 2 --train_games 2 --test_games 1
@@ -85,13 +86,18 @@ def main(args):
         if args.parallel:
             tp, vp, rounds, rl_log = t.tournament_rl_training_data_generation_parallel(players, gamma=args.gamma, n_jobs=args.n_jobs)
         else:
-            tp, vp, rounds, rl_log = t.tournament_rl_training_data_generation(players, gamma=args.gamma)
-
+            list_of_logs = []
+            for n in range((args.train_games//24) + 1):
+                t = RLTournament(no_games_in_tournament=24)
+                print(f"--- Sub-tournament {n+1}, games {n*24+1}-{(n+1)*24} ---")
+                tp, vp, rounds, rl_log = t.tournament_rl_training_data_generation(players, gamma=args.gamma)
+                list_of_logs.append(rl_log)
+            rl_log = pd.concat(list_of_logs, ignore_index=True)
         dataset = t.to_training_dataset(rl_log, structure=default_structure)
 
         #
         #debug_dataset(dataset, name="gameplay_phase", model=rl_model_gameplay)
-
+        print("Dataset prepared.")
         # === PPO training ===
         ppo = PPOTrainer(
             rl_model=rl_model_gameplay,
@@ -101,11 +107,11 @@ def main(args):
             learning_rate=args.lr
         )
         ppo.train(dataset, epochs=10, batch_size=256)
-
+        print("PPO training complete.")
         # Save checkpoint
         save_path = f"rl_model_gameplay_round{round_idx+1}.keras"
         rl_model_gameplay.model.save(save_path, include_optimizer=False)
-        print(f"✅ Saved {save_path}")
+        # print(f"✅ Saved {save_path}")
 
         # Save to S3
         save_to_s3(save_path, bucket_name, f"models/{save_path}")
@@ -121,9 +127,8 @@ def main(args):
         df_tournament_log = tr.log_tournament_results_in_dataframe(round_idx+1,overall_tournament_points, overall_victory_points, overall_rounds, players, df_tournament_log)
         save_path = f"rl_tournament_log{round_idx+1}.csv"
         df_tournament_log.to_csv(save_path, index=False)
-        print(f"✅ Saved {save_path}")
+        # print(f"✅ Saved {save_path}")
         save_to_s3(save_path, bucket_name, f"results/{save_path}")
-
 if __name__ == "__main__":
     import multiprocessing as mp
     mp.freeze_support()
