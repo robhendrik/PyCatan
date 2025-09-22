@@ -20,7 +20,6 @@ venvs/
 .env/
 .env*/
 .venv*/
-Scripts/
 bin/
 
 # -----------------------
