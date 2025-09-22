@@ -148,6 +148,35 @@ class Tournament:
             std_rounds = np.std(overall_rounds[:,i])/np.sqrt(self.no_games_in_tournament)
             print(f"{p.name}\t\t{avg_points:.2f}\t\t{std_points:.2f}\t\t{avg_victory_points:.2f}\t\t{std_victory_points:.2f}\t\t{avg_rounds:.2f}\t\t{std_rounds:.2f}")
 
+    def log_tournament_results_in_dataframe(self, tournament_index: int, overall_tournament_points: list[int], overall_victory_points: list[int], overall_rounds: list[int], players: list, log: pd.DataFrame = None) -> pd.DataFrame:
+        """Log tournament results in a DataFrame.
+
+        Args:
+            tournament_index (int): Index of the tournament.
+            overall_tournament_points (list[int]): List of overall tournament points.
+            overall_victory_points (list[int]): List of overall victory points.
+            overall_rounds (list[int]): List of overall rounds.
+            players (list): List of players.
+            log (pd.DataFrame, optional): Existing log DataFrame. Defaults to None.
+
+        Returns:
+            pd.DataFrame: DataFrame containing the logged tournament results.
+        """
+        if log is None:
+            header = ['tournament index', 'player', 'Avg Points', 'Std Points', 'Avg Victory Pts', 'Std Victory Pts', 'Avg Rounds', 'Std Rounds']
+            log = pd.DataFrame(columns=header)
+        
+        for i, p in enumerate(players):
+            avg_points = np.mean(overall_tournament_points[:,i])
+            std_points = np.std(overall_tournament_points[:,i])/np.sqrt(self.no_games_in_tournament)
+            avg_victory_points = np.mean(overall_victory_points[:,i])
+            std_victory_points = np.std(overall_victory_points[:,i])/np.sqrt(self.no_games_in_tournament)
+            avg_rounds = np.mean(overall_rounds[:,i])
+            std_rounds = np.std(overall_rounds[:,i])/np.sqrt(self.no_games_in_tournament)
+            log.loc[len(log)] = [tournament_index, p.name, avg_points, std_points, avg_victory_points, std_victory_points, avg_rounds, std_rounds]
+    
+        return log
+    
     def calculate_points(self,results):
         '''
         Calculate the points for each player based on their results.
