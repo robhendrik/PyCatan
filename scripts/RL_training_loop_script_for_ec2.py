@@ -81,7 +81,7 @@ def main(args):
         rl_player.rl_model_for_gameplay_phase.explore = True
 
         t = RLTournament(no_games_in_tournament=args.train_games)
-        t.verbose = False
+        t.verbose = True
         if args.parallel:
             tp, vp, rounds, rl_log = t.tournament_rl_training_data_generation_parallel(players, gamma=args.gamma, n_jobs=args.n_jobs)
         else:
