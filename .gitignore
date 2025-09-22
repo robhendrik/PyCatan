@@ -56,3 +56,5 @@ tf_logs/
 *.swp
 .DS_Store
 Thumbs.db
+*.pem
+
