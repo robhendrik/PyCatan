@@ -92,14 +92,14 @@ def main(args):
 
     # run jobs
     list_of_logs = []
-    # for worker_idx, worker_assignment in enumerate(assignments):
-    #     print(f"=== Worker {worker_idx}, assignment {worker_assignment} ===")
-    #     worker_job(worker_assignment, worker_idx, "model.keras", list_of_logs)
-    with mp.Pool(processes=len(assignments)) as pool:
-        rl_logs = pool.starmap(worker_job, [(worker_assignment, worker_idx, "model.keras", args.gamma, []) for worker_idx, worker_assignment in enumerate(assignments)])
-    for rl_log in rl_logs:
-        list_of_logs.extend(rl_log)
-    # merge logs and create dataset
+    for worker_idx, worker_assignment in enumerate(assignments):
+        print(f"=== Worker {worker_idx}, assignment {worker_assignment} ===")
+        worker_job(worker_assignment, worker_idx, "model.keras",  args.gamma, list_of_logs)
+    # with mp.Pool(processes=len(assignments)) as pool:
+    #     rl_logs = pool.starmap(worker_job, [(worker_assignment, worker_idx, "model.keras", args.gamma, []) for worker_idx, worker_assignment in enumerate(assignments)])
+    # for rl_log in rl_logs:
+    #     list_of_logs.extend(rl_log)
+    # # merge logs and create dataset
     rl_log = pd.concat(list_of_logs, ignore_index=True)
     dataset = to_training_dataset_parallel(rl_log, structure=default_structure)
     print(f"Created training dataset with {len(dataset)} entries from {len(rl_log)} log entries.")
