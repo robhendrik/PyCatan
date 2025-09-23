@@ -49,7 +49,7 @@ def find_optimal_assignment(train_games, n_jobs):
 
 def worker_job(worker_assignment, worker_idx, working_model, gamma, list_of_logs):
     for start, stop in worker_assignment:
-        print(f"Worker {worker_idx} assigned games {start+1}-{stop}")
+        print(f"Worker {worker_idx} assigned games {start}-{stop-1}")
 
         # === create rl player and load models ===
         original_player = ModelBasedCatanPlayer(name="original", persona="Original")
@@ -88,7 +88,7 @@ def main(args):
     assignments = find_optimal_assignment(args.train_games, args.n_jobs)
     original_player = ModelBasedCatanPlayer(name="original", persona="Original")
     # download working model from s3
-    s3.download_file(bucket_name, f"models/{args.working_model}", "model.keras")
+    s3.download_file(bucket_name, f"models/{args.working_model}", args.working_model)
 
     # run jobs
     list_of_logs = []
