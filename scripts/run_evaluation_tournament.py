@@ -59,7 +59,7 @@ def main(args):
     df_tournament_log.to_csv(save_path, index=False)
     s3.upload_file(save_path, bucket_name, f"results/{save_path}")
     print(f"✅ Uploaded tournament log to s3://{bucket_name}/results/{save_path}")
-    print(f"=== Finished evaluation tournament with model {load_path} on 24 tournaments==="
+    print(f"=== Finished evaluation tournament with model {load_path} on 24 tournaments===")
 
 if __name__ == "__main__":
     import multiprocessing as mp
