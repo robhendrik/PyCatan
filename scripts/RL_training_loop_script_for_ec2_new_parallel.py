@@ -85,7 +85,7 @@ def main(args):
     print('Available cores:', os.cpu_count())
     print(f'Request: number of games {args.train_games}, n_jobs: {args.n_jobs}')
     assignments = find_optimal_assignment(args.train_games, args.n_jobs)
-
+    original_player = ModelBasedCatanPlayer(name="original", persona="Original")
     # download working model from s3
     s3.download_file(bucket_name, f"models/{args.working_model}", "model.keras")
 
@@ -101,7 +101,7 @@ def main(args):
     # merge logs and create dataset
     rl_log = pd.concat(list_of_logs, ignore_index=True)
     dataset = to_training_dataset_parallel(rl_log, structure=default_structure)
-
+    print(f"Created training dataset with {len(dataset)} entries from {len(rl_log)} log entries.")
     # execute training
     initial_model = RLDecisionModel(structure = default_structure)
     saved_model = tf.keras.models.load_model(
