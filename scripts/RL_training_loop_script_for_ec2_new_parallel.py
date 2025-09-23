@@ -72,6 +72,7 @@ def worker_job(worker_assignment, worker_idx, working_model, gamma, list_of_logs
         # === Run tournament and collect logs ===
         rl_log = t.tournament_rl_training_data_generation_parallel(players, gamma=gamma, start_game_number=start, stop_game_number=stop)
         list_of_logs.extend(rl_log)
+        f"Worker {worker_idx} done."
         return rl_log
 
 @tf.keras.utils.register_keras_serializable()
