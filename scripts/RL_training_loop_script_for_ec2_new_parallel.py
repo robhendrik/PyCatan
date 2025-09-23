@@ -102,7 +102,7 @@ def main(args):
     # # merge logs and create dataset
     rl_log = pd.concat(list_of_logs, ignore_index=True)
     dataset = to_training_dataset_parallel(rl_log, structure=default_structure)
-    print(f"Created training dataset with {len(dataset)} entries from {len(rl_log)} log entries.")
+    print(f"Created training dataset with {len(dataset["y_policy"])} entries from {len(rl_log)} log entries.")
     # execute training
     initial_model = RLDecisionModel(structure = default_structure)
     saved_model = tf.keras.models.load_model(

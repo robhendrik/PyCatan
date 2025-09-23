@@ -53,7 +53,7 @@ def main(args):
     overall_tournament_points, overall_victory_points, overall_rounds = tr.tournament(players)
     if args.verbose:
         tr.print_tournament_results(overall_tournament_points, overall_victory_points, overall_rounds, players)
-    df_tournament_log = tr.log_tournament_results_in_dataframe(args.identifier,overall_tournament_points, overall_victory_points, overall_rounds, players, df_tournament_log)
+    df_tournament_log = tr.log_tournament_results_in_dataframe(args.identifier,overall_tournament_points, overall_victory_points, overall_rounds, players)
     save_path = f"rl_tournament_log_{args.identifier}.csv"
     df_tournament_log.to_csv(save_path, index=False)
     s3.upload_file(save_path, bucket_name, f"results/{save_path}")
