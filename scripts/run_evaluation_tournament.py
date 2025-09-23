@@ -26,6 +26,7 @@ def main(args):
     load_path = args.model_name
     s3.download_file(bucket_name, f"models/{load_path}", "model.keras")
     print(f"✅ Downloaded model checkpoint from s3://{bucket_name}/models/{load_path}")
+    print(f"=== Evaluation tournament with model {load_path} on 24 tournaments===")
 
     # --- Setup players ---
     original_player = ModelBasedCatanPlayer(name="original", persona="Original")
@@ -57,6 +58,8 @@ def main(args):
     save_path = f"rl_tournament_log_{args.identifier}.csv"
     df_tournament_log.to_csv(save_path, index=False)
     s3.upload_file(save_path, bucket_name, f"results/{save_path}")
+    print(f"✅ Uploaded tournament log to s3://{bucket_name}/results/{save_path}")
+    print(f"=== Finished evaluation tournament with model {load_path} on 24 tournaments==="
 
 if __name__ == "__main__":
     import multiprocessing as mp

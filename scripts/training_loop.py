@@ -8,9 +8,9 @@ s3 = boto3.client("s3")
 bucket_name = "pycatanbucket"
 
 
-rounds = 2
+rounds = 24
 for round in range(rounds):
     print(f"=== Round {round+1}/{rounds} ===")
-    rl.main(argparse.Namespace(working_model="working_model.keras", train_games=24, gamma=0.99, lr=3e-4, n_jobs=os.cpu_count()))  # train for 24 games each round
+    rl.main(argparse.Namespace(working_model="working_model.keras", train_games=96, gamma=0.99, lr=3e-4, n_jobs=os.cpu_count()))  # train for 24 games each round
     eval.main(argparse.Namespace(model_name="working_model.keras", identifier=round, verbose=True))
     s3.upload_file("working_model.keras", bucket_name, f"models/working_model_{round}.keras")
