@@ -1,0 +1,43 @@
+# .gitignore - ignore virtual environments and common Python artifacts
+# Ignore Python virtual environment directories
+venv/
+env/
+.venv/
+venvs/
+envs/
+ENV/
+env_*/
+*/env/
+
+# Specific venvs folder used in this workspace
+venvs/
+venvs/*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Pytest cache
+.pytest_cache/
+
+# IDEs and editors
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+
+# Logs
+*.log

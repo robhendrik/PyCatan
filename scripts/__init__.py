@@ -1,0 +1,1 @@
+from .PyCatan_tutorial_evaluation_tournament_with_rl_player_script import run_and_log_tournament
