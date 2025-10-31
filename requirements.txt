@@ -1,0 +1,42 @@
+## Minimal, less-sensitive requirements for PyCatan
+##
+## This file intentionally avoids strict pinning of every transitive dependency.
+## For reproducible environments, create and keep a separate lockfile or
+## constraints file (for example, produced by `pip freeze` or `pip-compile`) and
+## use it in CI or release artifacts only.
+
+# Core numerical & data libraries
+numpy
+pandas
+scipy
+
+# Machine learning / RL
+tensorflow>=2.10,<3
+keras
+
+# Data and storage
+boto3
+cloudpickle
+fastparquet
+
+# Notebooks & interactive
+jupyter
+ipython
+ipykernel
+notebook
+
+# Utilities & plotting
+matplotlib
+seaborn
+scikit-learn
+requests
+tqdm
+
+# Optional / dev tools (uncomment to install locally)
+# pytest
+# black
+
+# Notes:
+# - If you need exact versions for experiments, generate a dedicated lockfile
+#   and don't commit long, fully-pinned lists into the main requirements file.
+# - Keep large model/data artifacts out of the repo; use S3 or external storage.
