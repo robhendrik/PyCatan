@@ -9,6 +9,13 @@ ENV/
 env_*/
 */env/
 
+# Ignore the temp directories
+temp/
+tmp/
+Temp/
+tmp_*/
+temp/*
+
 # Specific venvs folder used in this workspace
 venvs/
 venvs/*
