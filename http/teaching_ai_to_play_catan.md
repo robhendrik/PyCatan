@@ -83,7 +83,9 @@ The random player is almost exactly zero. The imitator lands below the heuristic
 
 ## A note on the plumbing
 
-![The PyCatan software ecosystem: Python game logic, Keras and TensorFlow for the decision models, OpenAI for verbalization, matplotlib for visualization, and AWS S3 and EC2 for storage and compute](Ecosystem-1.png)
+![The PyCatan software ecosystem](Ecosystem-1.png)
+
+*The PyCatan software ecosystem: Python game logic, Keras and TensorFlow for the decision models, OpenAI for verbalization, matplotlib for visualization, and AWS S3 and EC2 for storage and compute.*
 
 Generating enough self-play games to train on is intensive, and the data generation is built to run many workers in parallel, with models and datasets checkpointed to S3 and training pushed onto EC2 instances. This is not specialized infrastructure, but it is the difference between an idea and an experiment you can actually run more than once. (The repository and the tutorials are there for exactly that [1].)
 
